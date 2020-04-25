@@ -12,7 +12,7 @@ namespace Alfheim_Roleplay.Register_Login
         {
             try
             {
-                player?.SpawnPlayer(new Vector3(0, 0, 72), 1000);
+                player.SpawnPlayer(new Vector3(0, 0, 72), 1000);
                 player.Model = (uint)AltV.Net.Enums.PedModel.FreemodeMale01;
                 player.SendChatMessage("Willkommen auf Alfheim Roleplay");
                 player.Emit("LoginRegister:Create");
@@ -26,17 +26,26 @@ namespace Alfheim_Roleplay.Register_Login
             Core.Debug.OutputDebugString("Login :" + name + "|" + password);
             if (Database.Main.LoginAccount(name, password))
             {
-                Core.Debug.OutputDebugString("Login == true");
+                player?.Emit("LoginRegister:Destroy");
+                // Login == True.
                 return;
             }
-            Core.Debug.OutputDebugString("Login == false");
         }
+
         [ClientEvent("Alfheim:Register")]
         public static void OnPlayerRegisterButtonPressed(IPlayer player, string name, string password)
         {
-            if (Database.Main.FindAccountByName(name)) { Core.Debug.OutputDebugString("Account Exestiert bereits!"); return; }
-            Database.Main.RegisterAccount(name, player.SocialClubId.ToString(), password, player.HardwareIdHash.ToString(), player.HardwareIdExHash.ToString());
-            Debug.OutputDebugString("Register :" + name + "|" + password);
+            try
+            {
+                if (Database.Main.FindAccountByName(name)) { Core.Debug.OutputDebugString("Account Exestiert bereits!"); return; }
+                if (Database.Main.FindAccountBySocialID(player.SocialClubId.ToString()) || Database.Main.FindAccountByHwid(player.HardwareIdHash.ToString()) || Database.Main.FindAccountByHardwareIdExHash(player.HardwareIdExHash.ToString()))
+                {
+                    Debug.OutputDebugString("Du hast bereits einen Account!");
+                    return;
+                }
+                Database.Main.RegisterAccount(name, player.SocialClubId.ToString(), password, player.HardwareIdHash.ToString(), player.HardwareIdExHash.ToString());
+            }
+            catch { }
         }
     }
 }

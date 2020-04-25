@@ -91,16 +91,78 @@ namespace Alfheim_Roleplay.Database
                     command.CommandText = "SELECT SpielerName FROM spieler WHERE SpielerName = @SpielerName LIMIT 1";
                     command.Parameters.AddWithValue("@SpielerName", name);
 
-                    using (MySqlDataReader reader = command.ExecuteReader())
-                    {
-                        found = reader.HasRows;
-                    }
+                    using MySqlDataReader reader = command.ExecuteReader();
+                    found = reader.HasRows;
                 }
 
                 return found;
             }
-            catch (Exception ex) { Core.Debug.CatchExceptions("RegisterAccount", ex); return false; }
+            catch (Exception ex) { Core.Debug.CatchExceptions("FindAccountByName", ex); return false; }
         }
 
+        public static bool FindAccountByHwid(string HardwareIdHash)
+        {
+            try
+            {
+                bool found = false;
+
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    MySqlCommand command = connection.CreateCommand();
+                    command.CommandText = "SELECT HardwareIdHash FROM spieler WHERE HardwareIdHash = @HardwareIdHash LIMIT 1";
+                    command.Parameters.AddWithValue("@HardwareIdHash", HardwareIdHash);
+
+                    using MySqlDataReader reader = command.ExecuteReader();
+                    found = reader.HasRows;
+                }
+
+                return found;
+            }
+            catch (Exception ex) { Core.Debug.CatchExceptions("FindAccountByHwid", ex); return false; }
+        }
+
+        public static bool FindAccountByHardwareIdExHash(string HardwareIdExHash)
+        {
+            try
+            {
+                bool found = false;
+
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    MySqlCommand command = connection.CreateCommand();
+                    command.CommandText = "SELECT HardwareIdHash FROM spieler WHERE HardwareIdExHash = @HardwareIdExHash LIMIT 1";
+                    command.Parameters.AddWithValue("@HardwareIdHash", HardwareIdExHash);
+
+                    using MySqlDataReader reader = command.ExecuteReader();
+                    found = reader.HasRows;
+                }
+
+                return found;
+            }
+            catch (Exception ex) { Core.Debug.CatchExceptions("FindAccountByHwid", ex); return false; }
+        }
+        public static bool FindAccountBySocialID(string SpielerSocial)
+        {
+            try
+            {
+                bool found = false;
+
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    MySqlCommand command = connection.CreateCommand();
+                    command.CommandText = "SELECT SpielerSocial FROM spieler WHERE SpielerSocial = @SpielerSocial LIMIT 1";
+                    command.Parameters.AddWithValue("@SpielerSocial", SpielerSocial);
+
+                    using MySqlDataReader reader = command.ExecuteReader();
+                    found = reader.HasRows;
+                }
+
+                return found;
+            }
+            catch (Exception ex) { Core.Debug.CatchExceptions("FindAccountBySocialID", ex); return false; }
+        }
     }
 }
